@@ -5,8 +5,8 @@ WORKDIR /app
 
 # Copy package manifests for both workspaces
 COPY package.json ./
-COPY backend/package.json ./backend/
-COPY frontend/package.json frontend/package-lock.json* ./frontend/
+COPY backend/package.json backend/package-lock.json ./backend/
+COPY frontend/package.json frontend/package-lock.json ./frontend/
 
 # Install frontend dependencies
 RUN cd frontend && npm ci
@@ -24,7 +24,7 @@ WORKDIR /app
 RUN apk add --no-cache python3 make g++
 
 # Copy backend package manifests and install production dependencies
-COPY backend/package.json backend/package-lock.json* ./backend/
+COPY backend/package.json backend/package-lock.json ./backend/
 RUN cd backend && npm ci --omit=dev
 
 # Copy backend source
