@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -52,6 +53,14 @@ app.use('/api/search', require('./routes/search'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/keys', require('./routes/apiKeys'));
 app.use('/api/integrations', require('./routes/integrations'));
+app.use('/api/brochures', require('./routes/brochures'));
+app.use('/api/ai', require('./routes/ai'));
+
+// Serve built React frontend (production or when SERVE_FRONTEND=true)
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+if (process.env.NODE_ENV === 'production' || process.env.SERVE_FRONTEND === 'true') {
+  app.use(express.static(frontendDist));
+}
 
 /**
  * @swagger
@@ -72,8 +81,14 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-// 404 handler
-app.use((_req, res) => {
+// 404 handler for API routes; for all others serve the frontend SPA
+app.use((req, res) => {
+  if (
+    (process.env.NODE_ENV === 'production' || process.env.SERVE_FRONTEND === 'true') &&
+    !req.path.startsWith('/api/')
+  ) {
+    return res.sendFile(path.join(frontendDist, 'index.html'));
+  }
   res.status(404).json({ error: 'Route not found.' });
 });
 
