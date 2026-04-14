@@ -10,8 +10,10 @@ const { getOpenAIClient, isAIEnabled } = require('../utils/openai');
 
 const router = express.Router();
 
-// Configure multer — store PDFs in the uploads directory
-const uploadDir = path.join(__dirname, '../../uploads');
+// Configure multer — store PDFs in the uploads directory (env-configurable for cloud volumes)
+const uploadDir = process.env.UPLOADS_DIR
+  ? path.resolve(process.env.UPLOADS_DIR)
+  : path.join(__dirname, '../../uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: dsp-real-estate
+    runtime: node
+    buildCommand: npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: DB_PATH
+        value: /data/dsp_real_estate.db
+      - key: UPLOADS_DIR
+        value: /data/uploads
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        fromService:
+          type: web
+          name: dsp-real-estate
+          property: host
+      - key: OPENAI_API_KEY
+        sync: false
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

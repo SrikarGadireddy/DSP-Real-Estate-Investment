@@ -8,7 +8,9 @@
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "start:backend": "cd backend && npm start",
-    "build:frontend": "cd frontend && npm run build"
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run install:all && npm run build:frontend",
+    "start": "cd backend && node src/server.js"
   },
   "keywords": ["real-estate", "investment", "platform"],
   "author": "DSP",
