@@ -114,6 +114,87 @@ DSP-Real-Estate-Investment/
 
 ## Getting Started
 
+### Online Hosting (no local installation required)
+
+The fastest way to get a live URL is to deploy on **Railway** (free tier available). Render and Fly.io are alternatives.
+
+---
+
+#### Option A — Railway (recommended, ~5 minutes)
+
+1. **Create a free account** at [railway.app](https://railway.app) and sign in with GitHub.
+2. Click **"New Project"** → **"Deploy from GitHub repo"** → select `DSP-Real-Estate-Investment`.
+3. Railway auto-detects `railway.json` and runs `npm run build` then `npm start`.
+4. Once the initial deploy starts, open the service → **Variables** tab → **Add variables**:
+
+   | Variable | Value |
+   |---|---|
+   | `NODE_ENV` | `production` |
+   | `JWT_SECRET` | any long random string |
+   | `JWT_EXPIRES_IN` | `7d` |
+   | `CORS_ORIGIN` | *(set after you know the URL, see step 6)* |
+   | `OPENAI_API_KEY` | *(optional — needed for AI features)* |
+
+5. **Add a persistent volume** (so the database and uploaded files survive redeploys):
+   - In the service → **Volumes** tab → click **"Add Volume"**.
+   - Mount path: `/data`, size: `1 GB`.
+   - Add two more variables:
+
+     | Variable | Value |
+     |---|---|
+     | `DB_PATH` | `/data/dsp_real_estate.db` |
+     | `UPLOADS_DIR` | `/data/uploads` |
+
+6. Railway assigns a public URL (e.g. `https://dsp-real-estate-production.up.railway.app`).  
+   Copy it, then set `CORS_ORIGIN` to that URL and redeploy.
+
+Your app is now live at the Railway URL. API docs are at `<your-url>/api/docs`.
+
+---
+
+#### Option B — Render (free tier, disk included on paid plan)
+
+1. **Create a free account** at [render.com](https://render.com) and connect your GitHub account.
+2. Click **"New" → "Web Service"** → select this repository.
+3. Render detects `render.yaml` and pre-fills all settings automatically.
+4. Fill in the two environment variables marked `sync: false`:
+
+   | Variable | Value |
+   |---|---|
+   | `JWT_SECRET` | any long random string |
+   | `OPENAI_API_KEY` | *(optional — needed for AI features)* |
+
+5. Click **"Create Web Service"**. Render builds, deploys, and gives you an `https://` URL.
+
+> **Note**: Render free tier has an ephemeral filesystem (data is lost on redeploy). The `render.yaml` includes a 1 GB persistent disk at `/data`, but persistent disks require a paid plan ($7/month). On the free tier the app still works — the database is just reset on each deploy.
+
+---
+
+#### Option C — Any Docker host (Fly.io, DigitalOcean App Platform, etc.)
+
+A `Dockerfile` is included in the repository root. Build and push:
+
+```bash
+docker build -t dsp-real-estate .
+docker run -p 5000:5000 \
+  -e NODE_ENV=production \
+  -e JWT_SECRET=changeme \
+  -v my-data:/data \
+  dsp-real-estate
+```
+
+For **Fly.io** specifically:
+```bash
+fly launch   # auto-detects Dockerfile
+fly volumes create data --size 1
+fly secrets set NODE_ENV=production JWT_SECRET=changeme DB_PATH=/data/dsp_real_estate.db UPLOADS_DIR=/data/uploads
+fly deploy
+```
+
+---
+
+### Local Development (optional)
+
 ### Prerequisites
 - Node.js 18+
 - npm 9+
@@ -150,36 +231,6 @@ npm run dev:backend
 # Terminal 2 — Start the frontend dev server
 npm run dev:frontend
 # Frontend runs at http://localhost:3000
-```
-
-### Production Build & Deploy
-
-The backend can serve the complete application (React SPA + API) as a single HTML deployment from one port.
-
-```bash
-# 1. Install all dependencies and build the React frontend into static files
-npm run build
-
-# 2. Configure the backend for production
-cp backend/.env.example backend/.env
-# Edit backend/.env:
-#   - Set JWT_SECRET to a strong random string
-#   - Set NODE_ENV=production  (enables frontend serving + production error handling)
-#   - Set CORS_ORIGIN to your deployment URL (e.g. https://your-app.com)
-#   - Optionally set OPENAI_API_KEY for AI features
-
-# 3. Start the server — serves both the API and the React frontend on port 5000
-npm start
-```
-
-How it works: when `NODE_ENV=production`, Express serves the compiled React app from `frontend/dist/` as static files. All `/api/*` requests are handled by the backend; all other paths return `index.html` so React Router handles client-side navigation.
-
-**Local production preview** (without changing `NODE_ENV`):
-
-```bash
-npm run build:frontend
-# Set SERVE_FRONTEND=true in backend/.env, then:
-npm run start:backend
 ```
 
 ## API Reference
