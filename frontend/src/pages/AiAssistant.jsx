@@ -95,7 +95,7 @@ export default function AiAssistant() {
       <div className="page-header">
         <h1 className="page-title">🤖 AI Real Estate Advisor</h1>
         <p className="page-subtitle">
-          Powered by GPT-4o — ask anything about real estate investment, get personalized analysis,
+          Powered by GPT-4o-mini — ask anything about real estate investment, get personalized analysis,
           and make smarter decisions.
         </p>
       </div>

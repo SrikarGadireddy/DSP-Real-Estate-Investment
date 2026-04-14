@@ -144,8 +144,15 @@ router.post('/upload', authenticate, (req, res, next) => {
     `).run(id, req.user.id, filename, originalname, size);
 
     try {
+      // Ensure the file path stays within the uploads directory (guard against path traversal)
+      const resolvedFile = path.resolve(filePath);
+      const resolvedUploadDir = path.resolve(uploadDir);
+      if (!resolvedFile.startsWith(resolvedUploadDir + path.sep)) {
+        return res.status(400).json({ error: 'Invalid file path.' });
+      }
+
       // Extract text from PDF
-      const fileBuffer = fs.readFileSync(filePath);
+      const fileBuffer = fs.readFileSync(resolvedFile);
       const pdfData = await pdfParse(fileBuffer);
       const rawText = (pdfData.text || '').trim();
 
@@ -298,10 +305,12 @@ router.delete('/:id', authenticate, (req, res, next) => {
       return res.status(404).json({ error: 'Brochure not found.' });
     }
 
-    // Remove file from disk
+    // Remove file from disk (validate path stays inside uploads directory)
     const filePath = path.join(uploadDir, brochure.filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    const resolvedFile = path.resolve(filePath);
+    const resolvedUploadDir = path.resolve(uploadDir);
+    if (resolvedFile.startsWith(resolvedUploadDir + path.sep) && fs.existsSync(resolvedFile)) {
+      fs.unlinkSync(resolvedFile);
     }
 
     db.prepare('DELETE FROM brochures WHERE id = ?').run(brochure.id);
