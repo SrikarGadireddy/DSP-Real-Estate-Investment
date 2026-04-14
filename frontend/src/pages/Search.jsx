@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { searchProperties, getSavedSearches, saveSearch, deleteSavedSearch } from '../services/searchService';
 import { useAuth } from '../context/AuthContext';
@@ -41,10 +41,12 @@ export default function Search() {
     }
   };
 
+  const initialFormRef = useRef(form);
+
   useEffect(() => {
-    const hasParams = Object.values(form).some((v) => v);
-    if (hasParams) doSearch(form);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    const hasParams = Object.values(initialFormRef.current).some((v) => v);
+    if (hasParams) doSearch(initialFormRef.current);
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
