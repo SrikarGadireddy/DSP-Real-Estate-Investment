@@ -152,14 +152,35 @@ npm run dev:frontend
 # Frontend runs at http://localhost:3000
 ```
 
-### Production Build
+### Production Build & Deploy
+
+The backend can serve the complete application (React SPA + API) as a single HTML deployment from one port.
 
 ```bash
-# Build the frontend
-npm run build:frontend
+# 1. Install all dependencies and build the React frontend into static files
+npm run build
 
-# Start the backend in production
-NODE_ENV=production npm run start:backend
+# 2. Configure the backend for production
+cp backend/.env.example backend/.env
+# Edit backend/.env:
+#   - Set JWT_SECRET to a strong random string
+#   - Set NODE_ENV=production  (enables frontend serving + production error handling)
+#   - Set CORS_ORIGIN to your deployment URL (e.g. https://your-app.com)
+#   - Optionally set OPENAI_API_KEY for AI features
+
+# 3. Start the server — serves both the API and the React frontend on port 5000
+npm start
+# Application available at http://localhost:5000
+# API docs available at http://localhost:5000/api/docs
+```
+
+How it works: when `NODE_ENV=production`, Express serves the compiled React app from `frontend/dist/` as static files. All `/api/*` requests are handled by the backend; all other paths return `index.html` so React Router handles client-side navigation.
+
+**Local production preview** (without changing `NODE_ENV`):
+
+```bash
+npm run build:frontend
+SERVE_FRONTEND=true npm run start:backend
 ```
 
 ## API Reference
