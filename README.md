@@ -170,8 +170,6 @@ cp backend/.env.example backend/.env
 
 # 3. Start the server — serves both the API and the React frontend on port 5000
 npm start
-# Application available at http://localhost:5000
-# API docs available at http://localhost:5000/api/docs
 ```
 
 How it works: when `NODE_ENV=production`, Express serves the compiled React app from `frontend/dist/` as static files. All `/api/*` requests are handled by the backend; all other paths return `index.html` so React Router handles client-side navigation.
@@ -180,7 +178,8 @@ How it works: when `NODE_ENV=production`, Express serves the compiled React app 
 
 ```bash
 npm run build:frontend
-SERVE_FRONTEND=true npm run start:backend
+# Set SERVE_FRONTEND=true in backend/.env, then:
+npm run start:backend
 ```
 
 ## API Reference
