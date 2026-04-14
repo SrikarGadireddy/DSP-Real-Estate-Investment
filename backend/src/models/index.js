@@ -118,6 +118,22 @@ function initializeDatabase() {
       created_at TEXT DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS brochures (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      filename TEXT NOT NULL,
+      original_name TEXT NOT NULL,
+      file_size INTEGER,
+      raw_text TEXT,
+      extracted_data TEXT DEFAULT '{}',
+      property_id TEXT REFERENCES properties(id) ON DELETE SET NULL,
+      status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'processing', 'completed', 'failed')),
+      ai_summary TEXT,
+      error_message TEXT,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE INDEX IF NOT EXISTS idx_properties_city ON properties(city);
     CREATE INDEX IF NOT EXISTS idx_properties_state ON properties(state);
     CREATE INDEX IF NOT EXISTS idx_properties_status ON properties(status);
@@ -129,6 +145,8 @@ function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_api_keys_user ON api_keys(user_id);
     CREATE INDEX IF NOT EXISTS idx_saved_searches_user ON saved_searches(user_id);
     CREATE INDEX IF NOT EXISTS idx_property_analytics_property ON property_analytics(property_id);
+    CREATE INDEX IF NOT EXISTS idx_brochures_user ON brochures(user_id);
+    CREATE INDEX IF NOT EXISTS idx_brochures_property ON brochures(property_id);
   `);
 
   seedApiIntegrations();

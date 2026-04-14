@@ -46,6 +46,12 @@ export default function Navbar() {
               <Link to="/investments" className="navbar__link" onClick={() => setMenuOpen(false)}>
                 Investments
               </Link>
+              <Link to="/brochures" className="navbar__link" onClick={() => setMenuOpen(false)}>
+                📄 Brochures
+              </Link>
+              <Link to="/ai-assistant" className="navbar__link" onClick={() => setMenuOpen(false)}>
+                🤖 AI Advisor
+              </Link>
               <Link to="/api-onboarding" className="navbar__link" onClick={() => setMenuOpen(false)}>
                 API Portal
               </Link>

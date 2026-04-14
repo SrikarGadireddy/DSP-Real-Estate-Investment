@@ -11,6 +11,8 @@ import Investments from './pages/Investments';
 import Search from './pages/Search';
 import ApiOnboarding from './pages/ApiOnboarding';
 import ApiIntegrations from './pages/ApiIntegrations';
+import BrochureUpload from './pages/BrochureUpload';
+import AiAssistant from './pages/AiAssistant';
 
 export default function App() {
   return (
@@ -53,6 +55,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ApiIntegrations />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/brochures"
+            element={
+              <ProtectedRoute>
+                <BrochureUpload />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ai-assistant"
+            element={
+              <ProtectedRoute>
+                <AiAssistant />
               </ProtectedRoute>
             }
           />

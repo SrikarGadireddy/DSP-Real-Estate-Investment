@@ -7,7 +7,11 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js"
   },
-  "keywords": ["real-estate", "investment", "api"],
+  "keywords": [
+    "real-estate",
+    "investment",
+    "api"
+  ],
   "author": "DSP",
   "license": "ISC",
   "type": "commonjs",
@@ -22,6 +26,9 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.1",
+    "multer": "^2.1.1",
+    "openai": "^4.104.0",
+    "pdf-parse": "^1.1.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^13.0.0"
